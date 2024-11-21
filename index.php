@@ -1,55 +1,19 @@
-<?php
-
-require 'vendor/autoload.php'; // Autoloader für Parsedown und Dompdf
-
-use Parsedown;
-use Dompdf\Dompdf;
-
-// Lade die Markdown-Datei
-$markdownFile = 'input.md';
-
-if (!file_exists($markdownFile)) {
-    die("Die Datei 'input.md' wurde nicht gefunden.");
-}
-
-$markdownContent = file_get_contents($markdownFile);
-
-// Konvertiere Markdown zu HTML
-$parsedown = new Parsedown();
-$htmlContent = $parsedown->text($markdownContent);
-
-// HTML in ein einfaches PDF-Template einfügen
-$pdfTemplate = "
 <!DOCTYPE html>
-<html lang='de'>
+<html lang="de">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Markdown zu PDF</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
-        h1, h2, h3 { color: #333; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown zu PDF Konverter</title>
 </head>
 <body>
-$htmlContent
+    <h1>Markdown zu PDF Konverter</h1>
+    <p>Laden Sie Ihre Markdown-Datei (.md) hoch, um sie in eine PDF-Datei umzuwandeln.</p>
+
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+        <label for="file">Wählen Sie eine Markdown-Datei aus:</label>
+        <input type="file" name="file" id="file" accept=".md" required>
+        <button type="submit">Hochladen und konvertieren</button>
+    </form>
 </body>
 </html>
-";
-
-// HTML zu PDF umwandeln
-$dompdf = new Dompdf();
-$dompdf->loadHtml($pdfTemplate);
-
-// Optional: Papierformat und Orientierung einstellen
-$dompdf->setPaper('A4', 'portrait');
-
-// PDF rendern
-$dompdf->render();
-
-// PDF speichern oder an den Browser senden
-$outputPath = 'output.pdf';
-file_put_contents($outputPath, $dompdf->output());
-
-echo "Die PDF wurde erfolgreich erstellt: <a href='$outputPath'>output.pdf</a>";
 
